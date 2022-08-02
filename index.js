@@ -4,11 +4,12 @@ const express = require('express');
 const { join } = require('path');
 const path = require('path');
 const { uid } = require('uid');
+const { sequenceEqual } = require('rxjs');
 
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'password',
+  password: 'Hfwa0312',
   database: 'ecommerce_db'
 })
 
@@ -97,11 +98,15 @@ function addDepartment() {
   inquirer.prompt([
     {
       message: "Enter Department Name",
-      name: "departmentID",
+      name: "name",
       type: "input"
     }
   ]).then(function (answer) {
-    db.query("INSERT INTO departments (departmentID) VALUEs")
+    db.query("INSERT INTO departments (name) VALUES(?)", [answer.name], function (err, res) {
+      if (err) throw err;
+      console.table(res)
+      menuStart()
+    })
   })
 };
 
@@ -110,7 +115,7 @@ function addRole() {
     {
       message: "Enter Role Name:",
       type: "input",
-      name: "roleID",
+      name: "title",
     },
     {
       message: "Enter Role Salary",
@@ -118,11 +123,17 @@ function addRole() {
       name:"salary",
     },
     {
-      message: "Enter Role Department",
+      message: "Enter Role Department ID",
       type: "input",
-      name: "departmentID",
+      name: "departID",
     }
-  ]).then()
+  ]).then(function (answer) {
+    db.query("INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?,)", [answer.title, answer.salary, answer.departID], function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      menuStart
+    });
+  });
 };
 
 function addEmployee() {
@@ -130,12 +141,12 @@ function addEmployee() {
     {
       message: "Enter Employee first name:",
       type: "input",
-      name: "first_name",
+      name: "first",
     },
     {
       message: "Enter Employee last name:",
       type: "input",
-      name: "last_name",
+      name: "last",
     },
     {
       message: "Enter Employee role:",
@@ -149,14 +160,17 @@ function addEmployee() {
     },
   ])
   .then(function (answer) {
-
-  })
-};
+    db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?,)", [answer.first, answer.last, answer.roleID, answer.managerID], function (err, res){
+      if (err) throw err;
+      console.table(res);
+    });
+  });
+}
 
 function updateRole() {
   inquirer.prompt([
     {
-      message: "Enter Employee ID:",
+      message: "Enter Employee ID to Update:",
       type: "input",
       name: "employeeID",
     },
@@ -167,10 +181,11 @@ function updateRole() {
     },
 
   ]).then(update => {
-    let newRole = {
-      role
-    }
-  })
+    sequenceEqual.query("UPDATE employee SET role_id=? WHERE id=?", [answer.roleID, answer.employeeID], function (err, res) {
+      if (err) throw err;
+      console.table(res);
+    });
+  });
 };
 
 menuStart();

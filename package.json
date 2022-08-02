@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/GeorgeMMartinez/emp-track/issues"
   },
-  "homepage": "https://github.com/GeorgeMMartinez/emp-track#readme"
+  "homepage": "https://github.com/GeorgeMMartinez/emp-track#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^9.0.2",
+    "mysql2": "^2.3.3"
+  }
 }
